@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 CryptoQuant Pro - Bitcoin Analysis Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* 네비게이션 바 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #007bff, #6633ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 123, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #007bff, #6633ff);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            margin-top: 80px;
+            padding: 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 히어로 섹션 */
+        .hero-section {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(102, 51, 153, 0.1) 100%);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #007bff, #6633ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .bitcoin-price { 
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .change-positive { color: #28a745; }
+        .change-negative { color: #dc3545; }
+
+        /* 대시보드 그리드 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 123, 255, 0.3);
+            border-color: rgba(0, 123, 255, 0.5);
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #007bff, #6633ff);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #28a745;
+        }
+
+        .card-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-features li {
+            padding: 5px 0;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .card-features li:before {
+            content: '✓';
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .launch-button {
+            background: linear-gradient(135deg, #007bff, #6633ff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .launch-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        /* 실시간 상태 */
+        .status-bar {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* 푸터 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.95);
+                flex-direction: column;
+                padding: 20px;
+                gap: 10px;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .main-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🚀 CryptoQuant Pro</div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                        🏠 대시보드
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('realtime')">
+                        📊 실시간 분석
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('technical')">
+                        📈 기술적 분석
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('portfolio')">
+                        💼 포트폴리오
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('alerts')">
+                        🔔 알림
+                    </a>
+                </li>
+            </ul>
+
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                ☰
+            </button>
+        </div>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="main-container">
+        <!-- 실시간 상태 바 -->
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                실시간 데이터 연결됨 | CoinGecko API | 마지막 업데이트: <span id="lastUpdate">로딩 중...</span>
+            </div>
+        </div>
+
+        <!-- 대시보드 섹션 -->
+        <div id="dashboardSection">
+            <!-- 히어로 섹션 -->
+            <div class="hero-section">
+                <h1 class="hero-title">Bitcoin Analysis Platform</h1>
+                <p class="hero-subtitle">실시간 암호화폐 분석, 기술적 지표, 온체인 데이터를 한 곳에서</p>
+                
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-value bitcoin-price" id="bitcoinPrice">Loading...</div>
+                        <div>Bitcoin (BTC)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bitcoin24hChange">Loading...</div>
+                        <div>24h 변동률</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bitcoinVolume">Loading...</div>
+                        <div>거래량 (24h)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bitcoinMarketCap">Loading...</div>
+                        <div>시가총액</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 대시보드 그리드 -->
+            <div class="dashboard-grid">
+                <div class="dashboard-card" onclick="openPage('bitcoin-realtime-analysis.html')">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">실시간 Bitcoin 분석</h3>
+                    <p class="card-description">
+                        실시간 가격 데이터와 기본적인 기술적 분석을 제공합니다.
+                    </p>
+                    <ul class="card-features">
+                        <li>실시간 가격 및 변동률</li>
+                        <li>RSI, MACD, 볼린저밴드</li>
+                        <li>온체인 메트릭</li>
+                        <li>가치 투자 지표</li>
+                        <li>자동 30초 새로고침</li>
+                    </ul>
+                    <button class="launch-button">🚀 실시간 분석 시작</button>
+                </div>
+
+                <div class="dashboard-card" onclick="openPage('bitcoin-advanced-analysis.html')">
+                    <div class="card-icon">📈</div>
+                    <h3 class="card-title">고급 기술적 분석</h3>
+                    <p class="card-description">
+                        Chart.js 기반의 고급 차트와 시그널 감지 시스템입니다.
+                    </p>
+                    <ul class="card-features">
+                        <li>캔들스틱 & 하이킨아시 차트</li>
+                        <li>양봉/음봉 전환 시그널</li>
+                        <li>컵앤핸들 패턴 감지</li>
+                        <li>MACD, RSI 차트 시각화</li>
+                        <li>시그널 내보내기</li>
+                    </ul>
+                    <button class="launch-button">📈 고급 차트 보기</button>
+                </div>
+
+                <div class="dashboard-card" onclick="alert('준비 중입니다!')">
+                    <div class="card-icon">🔗</div>
+                    <h3 class="card-title">온체인 분석</h3>
+                    <p class="card-description">
+                        블록체인 데이터 기반의 심화 분석을 제공합니다.
+                    </p>
+                    <ul class="card-features">
+                        <li>고래 거래 추적</li>
+                        <li>거래소 유입/유출</li>
+                        <li>네트워크 해시레이트</li>
+                        <li>DeFi 프로토콜 TVL</li>
+                        <li>스테이킹 리워드</li>
+                    </ul>
+                    <button class="launch-button">🔗 온체인 분석</button>
+                </div>
+
+                <div class="dashboard-card" onclick="alert('준비 중입니다!')">
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">AI 예측 모델</h3>
+                    <p class="card-description">
+                        머신러닝 기반의 가격 예측 및 트렌드 분석입니다.
+                    </p>
+                    <ul class="card-features">
+                        <li>LSTM 가격 예측</li>
+                        <li>감정 분석</li>
+                        <li>뉴스 영향도 분석</li>
+                        <li>거래량 예측</li>
+                        <li>변동성 모델링</li>
+                    </ul>
+                    <button class="launch-button">🎯 AI 예측</button>
+                </div>
+
+                <div class="dashboard-card" onclick="alert('준비 중입니다!')">
+                    <div class="card-icon">💼</div>
+                    <h3 class="card-title">포트폴리오 관리</h3>
+                    <p class="card-description">
+                        개인 포트폴리오 추적 및 수익률 분석 도구입니다.
+                    </p>
+                    <ul class="card-features">
+                        <li>포트폴리오 추적</li>
+                        <li>수익률 계산</li>
+                        <li>리스크 분석</li>
+                        <li>분산투자 제안</li>
+                        <li>세금 계산</li>
+                    </ul>
+                    <button class="launch-button">💼 포트폴리오</button>
+                </div>
+
+                <div class="dashboard-card" onclick="alert('준비 중입니다!')">
+                    <div class="card-icon">🔔</div>
+                    <h3 class="card-title">스마트 알림</h3>
+                    <p class="card-description">
+                        맞춤형 가격 알림 및 시그널 알림 시스템입니다.
+                    </p>
+                    <ul class="card-features">
+                        <li>가격 알림 설정</li>
+                        <li>기술적 시그널 알림</li>
+                        <li>뉴스 알림</li>
+                        <li>카카오톡/이메일 연동</li>
+                        <li>알림 히스토리</li>
+                    </ul>
+                    <button class="launch-button">🔔 알림 설정</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 실시간 분석 섹션 -->
+        <div id="realtimeSection" style="display: none;">
+            <iframe src="bitcoin-realtime-analysis.html" width="100%" height="800px" frameborder="0"></iframe>
+        </div>
+
+        <!-- 기술적 분석 섹션 -->
+        <div id="technicalSection" style="display: none;">
+            <iframe src="bitcoin-advanced-analysis.html" width="100%" height="800px" frameborder="0"></iframe>
+        </div>
+
+        <!-- 포트폴리오 섹션 -->
+        <div id="portfolioSection" style="display: none;">
+            <div style="text-align: center; padding: 100px; color: #888;">
+                💼 포트폴리오 관리 기능 준비 중입니다...
+            </div>
+        </div>
+
+        <!-- 알림 섹션 -->
+        <div id="alertsSection" style="display: none;">
+            <div style="text-align: center; padding: 100px; color: #888;">
+                🔔 스마트 알림 기능 준비 중입니다...
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="footer">
+        <p>&copy; 2024 CryptoQuant Pro - Bitcoin Analysis Platform</p>
+        <p>실시간 데이터 제공: CoinGecko API | 모든 분석은 참고용이며 투자 권유가 아닙니다</p>
+    </div>
+
+    <script>
+        // 네비게이션 함수
+        function showSection(sectionName) {
+            // 모든 섹션 숨기기
+            document.querySelectorAll('[id$="Section"]').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // 네비게이션 링크 상태 업데이트
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // 선택된 섹션 보이기
+            if (sectionName === 'dashboard') {
+                document.getElementById('dashboardSection').style.display = 'block';
+            } else if (sectionName === 'realtime') {
+                document.getElementById('realtimeSection').style.display = 'block';
+            } else if (sectionName === 'technical') {
+                document.getElementById('technicalSection').style.display = 'block';
+            } else if (sectionName === 'portfolio') {
+                document.getElementById('portfolioSection').style.display = 'block';
+            } else if (sectionName === 'alerts') {
+                document.getElementById('alertsSection').style.display = 'block';
+            }
+
+            // 클릭된 네비게이션 링크 활성화
+            event.target.classList.add('active');
+        }
+
+        // 페이지 열기
+        function openPage(url) {
+            window.open(url, '_blank');
+        }
+
+        // 모바일 메뉴 토글
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Bitcoin 가격 데이터 로드
+        async function loadBitcoinData() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true');
+                const data = await response.json();
+                
+                const bitcoin = data.bitcoin;
+                
+                // 가격 업데이트
+                document.getElementById('bitcoinPrice').textContent = `$${bitcoin.usd.toLocaleString()}`;
+                
+                // 24시간 변동률
+                const change = bitcoin.usd_24h_change || 0;
+                const changeElement = document.getElementById('bitcoin24hChange');
+                changeElement.textContent = `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+                changeElement.className = `stat-value ${change > 0 ? 'change-positive' : 'change-negative'}`;
+                
+                // 거래량
+                document.getElementById('bitcoinVolume').textContent = `$${(bitcoin.usd_24h_vol / 1e9).toFixed(1)}B`;
+                
+                // 시가총액
+                document.getElementById('bitcoinMarketCap').textContent = `$${(bitcoin.usd_market_cap / 1e12).toFixed(2)}T`;
+                
+                // 마지막 업데이트 시간
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+                
+            } catch (error) {
+                console.error('Bitcoin 데이터 로딩 오류:', error);
+                document.getElementById('bitcoinPrice').textContent = 'API 오류';
+            }
+        }
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBitcoinData();
+            
+            // 30초마다 자동 새로고침
+            setInterval(loadBitcoinData, 30000);
+        });
+
+        // 윈도우 리사이즈 시 모바일 메뉴 숨기기
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.getElementById('navMenu').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html> 
